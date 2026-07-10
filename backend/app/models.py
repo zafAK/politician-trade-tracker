@@ -12,6 +12,7 @@ class Politician(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True, index=True)
     chamber: Mapped[str] = mapped_column(String) #house or senate
+    party: Mapped[str | None] = mapped_column(String, nullable=True)
 
     trades: Mapped[list["Trade"]] = relationship(back_populates="politician")
 
@@ -24,7 +25,7 @@ class Trade(Base):
     ticker: Mapped[str] = mapped_column(String)
     min_amount: Mapped[int] = mapped_column(Integer)
     max_amount: Mapped[int] = mapped_column(Integer)
-    #asset_description: Mapped[str] = mapped_column(String, nullable=True)
+    asset_description: Mapped[str] = mapped_column(String, nullable=True)
 
     raw_hash: Mapped[str] = mapped_column(String, unique=True, index=True)
     source: Mapped[str | None] = mapped_column(String, nullable=True) #Fixture
