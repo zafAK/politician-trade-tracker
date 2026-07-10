@@ -17,7 +17,14 @@ export default function App() {
         <Dashboard />
       </main>
       <footer className="app-footer">
-        Data: public STOCK Act disclosures · For demonstration purposes
+        Data: public STOCK Act disclosures ·{" "}
+        <a
+          href="https://raw.githubusercontent.com/timothycarambat/senate-stock-watcher-data/master/aggregate/all_transactions.json"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          senate-stock-watcher-data
+        </a>
       </footer>
     </div>
   );

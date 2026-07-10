@@ -6,3 +6,4 @@ python-dotenv==1.2.2
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
 groq==0.15.0
+pytest==8.3.4

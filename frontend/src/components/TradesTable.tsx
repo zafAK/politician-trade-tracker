@@ -36,7 +36,7 @@ export function TradesTable({ page, loading, onPage }: Props) {
               <td>
                 <span className={`pill ${t.transaction_type}`}>{t.transaction_type}</span>
               </td>
-              <td className="mono">{formatAmount(t.amount_min, t.amount_max)}</td>
+              <td className="mono">{formatAmount(t.min_amount, t.max_amount)}</td>
               <td>{formatDate(t.transaction_date)}</td>
             </tr>
           ))}
