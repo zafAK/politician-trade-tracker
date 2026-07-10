@@ -1,11 +1,42 @@
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from contextlib import asynccontextmanager
 
-from .db import engine, init_db, get_session
-from app.ingest.stock_watcher import StockWatcherSource
-from app.ingest.normalize import normalize, SkipRecord
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from .config import settings
+from .db import init_db, SessionLocal
+from .repository import counts
+from app.ingest.sync import run_sync
+from app.ingest.fixture import FixtureSource
+
+from .routers import admin, trades
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Ensure tables exist on startup so a fresh clone works with no migration step.
+    init_db()
+    with SessionLocal() as session:
+        totalCounts, _ = counts(session)
+        if totalCounts == 0:
+            run_sync(session=session, source=FixtureSource())
+         
+    yield
 
-# print(normalize({'transaction_date': '12/02/2020', 'owner': 'N/A', 'ticker': 'AAPL', 'asset_description': 'This filing was disclosed via scanned PDF. Use link in ptr_link column to view the PDF.', 'asset_type': 'PDF Disclosed Filing', 'type': 'N/A', 'amount': '$10,000 - $50,000', 'comment': '', 'senator': 'Richard Blumenthal', 'ptr_link': 'https://efdsearch.senate.gov/search/view/paper/2a123633-1454-49ff-8c3b-c4028372a119/'},
-#           "fixture"))
+
+app = FastAPI(title="Politician Trades Tracker", version="0.1.0", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(trades.router)
+app.include_router(admin.router)
+
+
+@app.get("/health", tags=["meta"])
+def health() -> dict:
+    return {"status": "ok", "tradesource": settings.tradesource}

@@ -38,7 +38,7 @@ def list_trades(
     end: date | None = None,
     limit: int = 50,
     offset: int = 0,
-) -> tuple[list[Trade], int]:
+) -> tuple[list[Trade], int]: # For all filters that will be applied to frontend, build sql query here.
     stmt = select(Trade).join(Politician)
     if politician:
         stmt = stmt.where(Politician.name.ilike(f"%{politician}%"))
@@ -73,7 +73,6 @@ def list_politicians(session: Session) -> list[Politician]:
 def top_tickers(session: Session, limit: int = 10) -> list[tuple[str, int]]:
     stmt = (
         select(Trade.ticker, func.count().label("n"))
-        .where(Trade.ticker.is_not(None))
         .group_by(Trade.ticker)
         .order_by(func.count().desc())
         .limit(limit)
@@ -84,7 +83,6 @@ def top_tickers(session: Session, limit: int = 10) -> list[tuple[str, int]]:
 def distinct_tickers(session: Session) -> list[str]:
     stmt = (
         select(Trade.ticker)
-        .where(Trade.ticker.is_not(None))
         .distinct()
         .order_by(Trade.ticker)
     )

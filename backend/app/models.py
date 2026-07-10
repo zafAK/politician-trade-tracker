@@ -1,7 +1,7 @@
 
 
-from datetime import date
-from sqlalchemy import Date, String, Integer, ForeignKey
+from datetime import date, datetime
+from sqlalchemy import Date, DateTime, String, Integer, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
@@ -26,10 +26,13 @@ class Trade(Base):
     min_amount: Mapped[int] = mapped_column(Integer)
     max_amount: Mapped[int] = mapped_column(Integer)
     asset_description: Mapped[str] = mapped_column(String, nullable=True)
+    transaction_type: Mapped[str] = mapped_column(String)
 
     raw_hash: Mapped[str] = mapped_column(String, unique=True, index=True)
-    source: Mapped[str | None] = mapped_column(String, nullable=True) #Fixture
+    source: Mapped[str] = mapped_column(String) #Fixture
 
     politician: Mapped[Politician] = relationship(back_populates="trades")
+
+    synced_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     
 
