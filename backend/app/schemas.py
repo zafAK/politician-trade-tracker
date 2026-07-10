@@ -51,3 +51,26 @@ class SyncResult(BaseModel):
     inserted: int
     updated: int
     total_in_db: int
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list["ChatTurn"] = []
+
+
+class ChatTurn(BaseModel):
+    role: str  # "user" | "assistant"
+    content: str
+
+
+class ToolCallTrace(BaseModel):
+    """Surfaced to the UI so every agent answer is auditable back to a DB query."""
+
+    name: str
+    arguments: dict
+    result_preview: str
+
+
+class ChatResponse(BaseModel):
+    answer: str
+    tool_calls: list[ToolCallTrace] = []

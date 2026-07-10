@@ -6,10 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .db import init_db, SessionLocal
 from .repository import counts
-from app.ingest.sync import run_sync
-from app.ingest.fixture import FixtureSource
+from .ingest.sync import run_sync
+from .ingest.fixture import FixtureSource
 
-from .routers import admin, trades
+from .routers import admin, trades, chat
 
 
 @asynccontextmanager
@@ -35,6 +35,7 @@ app.add_middleware(
 
 app.include_router(trades.router)
 app.include_router(admin.router)
+app.include_router(chat.router)
 
 
 @app.get("/health", tags=["meta"])
